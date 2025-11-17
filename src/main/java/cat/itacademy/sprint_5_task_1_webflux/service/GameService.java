@@ -14,9 +14,14 @@ public class GameService {
     public GameService(GameRepository gameRepository) {
         this.gameRepository = gameRepository;
     }
+
     public Mono<GameState> createGame(Player player) {
         GameState gameState = initGame(player);
         return gameRepository.save(gameState);
+    }
+
+    public Mono<GameState> getGameDetails(String id) {
+        return gameRepository.findById(id);
     }
 
     private GameState initGame(Player player) {
