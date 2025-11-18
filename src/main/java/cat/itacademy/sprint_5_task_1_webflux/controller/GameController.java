@@ -3,7 +3,6 @@ package cat.itacademy.sprint_5_task_1_webflux.controller;
 import cat.itacademy.sprint_5_task_1_webflux.domain.mongodb.GameState;
 import cat.itacademy.sprint_5_task_1_webflux.domain.mysql.Player;
 import cat.itacademy.sprint_5_task_1_webflux.service.GameService;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -22,7 +21,12 @@ public class GameController {
     }
 
     @GetMapping("/game/{id}")
-    public Mono<GameState> getGame(@PathVariable String id) {
+    public Mono<GameState> getGameById(@PathVariable String id) {
         return gameService.getGameDetails(id);
+    }
+
+    @DeleteMapping("/game/{id}/delete")
+    public Mono<Void> deleteGame(@PathVariable String id) {
+        return gameService.deleteGame(id);
     }
 }

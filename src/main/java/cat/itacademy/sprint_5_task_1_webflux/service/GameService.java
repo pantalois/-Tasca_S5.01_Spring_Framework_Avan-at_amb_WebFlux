@@ -24,6 +24,10 @@ public class GameService {
         return gameRepository.findById(id);
     }
 
+    public Mono<Void> deleteGame(String id) {
+        return gameRepository.deleteById(id);
+    }
+
     private GameState initGame(Player player) {
         return new GameState(player.getName(), 0, 0);
     }
