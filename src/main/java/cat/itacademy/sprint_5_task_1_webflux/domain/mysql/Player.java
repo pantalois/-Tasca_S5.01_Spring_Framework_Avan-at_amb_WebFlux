@@ -16,4 +16,7 @@ public class Player {
 
     @NonNull
     private String name;
+
+    @NonNull
+    private int score;
 }
