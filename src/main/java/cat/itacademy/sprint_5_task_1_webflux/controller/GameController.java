@@ -1,5 +1,6 @@
 package cat.itacademy.sprint_5_task_1_webflux.controller;
 
+import cat.itacademy.sprint_5_task_1_webflux.domain.Move;
 import cat.itacademy.sprint_5_task_1_webflux.domain.mongodb.GameState;
 import cat.itacademy.sprint_5_task_1_webflux.domain.mysql.Player;
 import cat.itacademy.sprint_5_task_1_webflux.service.GameService;
@@ -23,6 +24,11 @@ public class GameController {
     @GetMapping("/game/{id}")
     public Mono<GameState> getGameById(@PathVariable String id) {
         return gameService.getGameDetails(id);
+    }
+
+    @PutMapping("game/{id}/play")
+    public Mono<GameState> playGame(@PathVariable String id , @RequestBody Move move) {
+        return gameService.makeMove(id, move);
     }
 
     @DeleteMapping("/game/{id}/delete")

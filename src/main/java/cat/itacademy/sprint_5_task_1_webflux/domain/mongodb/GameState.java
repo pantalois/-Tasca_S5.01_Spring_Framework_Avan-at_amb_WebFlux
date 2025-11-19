@@ -1,5 +1,6 @@
 package cat.itacademy.sprint_5_task_1_webflux.domain.mongodb;
 
+import cat.itacademy.sprint_5_task_1_webflux.domain.mysql.Player;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +15,6 @@ import java.util.List;
 public class GameState {
 
     @Id
-
     private String id;
 
     private Long gameId;
