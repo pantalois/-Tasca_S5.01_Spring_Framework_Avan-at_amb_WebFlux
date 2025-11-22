@@ -1,6 +1,8 @@
 package cat.itacademy.sprint_5_task_1_webflux.domain.mongodb;
 
-import cat.itacademy.sprint_5_task_1_webflux.domain.mysql.Player;
+import cat.itacademy.sprint_5_task_1_webflux.domain.Card;
+import cat.itacademy.sprint_5_task_1_webflux.domain.GameResult;
+import cat.itacademy.sprint_5_task_1_webflux.domain.Turn;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +21,8 @@ public class GameState {
 
     private Long gameId;
 
-    private List<String> playerCards;
-    private List<String> dealerCards;
+    private List<Card> playerCards;
+    private List<Card> dealerCards;
 
     @NonNull
     private String playerName;
@@ -30,5 +32,13 @@ public class GameState {
     @NonNull
     private Integer dealerScore;
 
-    private List<String> deck; // mazo que se va reduciendo
+    @NonNull
+    private List<Card> deck; // mazo que se va reduciendo
+
+
+    @NonNull
+    private Turn currentTurn;
+
+    @NonNull
+    private GameResult result;
 }

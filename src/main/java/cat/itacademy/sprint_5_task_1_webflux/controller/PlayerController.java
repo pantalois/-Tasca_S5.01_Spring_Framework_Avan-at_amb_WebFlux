@@ -1,7 +1,6 @@
 package cat.itacademy.sprint_5_task_1_webflux.controller;
 
 import cat.itacademy.sprint_5_task_1_webflux.domain.mysql.Player;
-import cat.itacademy.sprint_5_task_1_webflux.repository.PlayerRepository;
 import cat.itacademy.sprint_5_task_1_webflux.service.PlayerService;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
