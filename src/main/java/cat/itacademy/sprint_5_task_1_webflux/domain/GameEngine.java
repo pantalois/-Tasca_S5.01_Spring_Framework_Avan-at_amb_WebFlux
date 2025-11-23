@@ -156,7 +156,7 @@ public class GameEngine {
         state.setCurrentTurn(Turn.DEALER);
 
         // 2) el crupier roba hasta tener 17 o más
-        while (state.getDealerScore() < 17) {
+        while (state.getDealerScore() < 17 || state.getDealerScore() < state.getPlayerScore()) {
             drawCardForDealer(state);
         }
 

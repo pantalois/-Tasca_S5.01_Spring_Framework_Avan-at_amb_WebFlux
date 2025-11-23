@@ -18,5 +18,5 @@ public class Player {
     private String name;
 
     @NonNull
-    private int score;
+    private Integer wins;
 }

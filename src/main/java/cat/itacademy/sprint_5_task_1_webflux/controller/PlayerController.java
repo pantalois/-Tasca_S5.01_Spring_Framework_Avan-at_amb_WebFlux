@@ -17,7 +17,7 @@ public class PlayerController {
 
     @GetMapping("/ranking")
     public Flux<Player> ranking() {
-        return playerService.getPlayersRanking();
+        return playerService.showRanking();
     }
 
     @GetMapping("/player")

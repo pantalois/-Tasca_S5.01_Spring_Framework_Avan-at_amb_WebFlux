@@ -15,9 +15,23 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-    public Flux<Player> getPlayersRanking() {
-        return playerRepository.findAll();//Faltará transformar a dto ordenando la información de mayor a menor
+    public Mono<Player> registerWin(String playerName) {
+        return playerRepository.findByName(playerName)
+                .switchIfEmpty(
+                        Mono.defer(() -> playerRepository.save(
+                                new Player(playerName, 0)
+                        ))
+                )
+                .flatMap(player -> {
+                    player.setWins(player.getWins() + 1);
+                    return playerRepository.save(player);
+                });
     }
+
+    public Flux<Player> showRanking() {
+        return playerRepository.findAllByOrderByWinsDesc();
+    }
+
 
     public Mono<Player> createPlayer(Player player) {
         return playerRepository.save(player); //Comprobar que no exista el nombre en base de datos
@@ -31,7 +45,6 @@ public class PlayerService {
         return playerRepository.findById(id)
                 .flatMap(playerModified -> {
                     playerModified.setName(player.getName());
-                    playerModified.setScore(player.getScore());
                     return playerRepository.save(playerModified);
                 });
     }
