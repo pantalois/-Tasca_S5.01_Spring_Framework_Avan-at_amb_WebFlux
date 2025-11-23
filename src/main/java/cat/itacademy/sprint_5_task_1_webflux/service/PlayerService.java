@@ -1,7 +1,8 @@
 package cat.itacademy.sprint_5_task_1_webflux.service;
 
-import cat.itacademy.sprint_5_task_1_webflux.domain.mysql.Player;
-import cat.itacademy.sprint_5_task_1_webflux.repository.PlayerRepository;
+import cat.itacademy.sprint_5_task_1_webflux.domain.player.Player;
+import cat.itacademy.sprint_5_task_1_webflux.exception.PlayerNotFoundException;
+import cat.itacademy.sprint_5_task_1_webflux.repository.mysql.PlayerRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,37 +16,34 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-    public Mono<Player> registerWin(String playerName) {
-        return playerRepository.findByName(playerName)
-                .switchIfEmpty(
-                        Mono.defer(() -> playerRepository.save(
-                                new Player(playerName, 0)
-                        ))
-                )
-                .flatMap(player -> {
-                    player.setWins(player.getWins() + 1);
-                    return playerRepository.save(player);
-                });
-    }
-
+    /**
+     * Devuelve el ranking de jugadores.
+     * Ahora mismo delega en findAll().
+     * Si tienes un método específico en el repositorio (p.ej. findAllByOrderBySuccessRateDesc),
+     * lo cambias aquí y no tocas el controller.
+     */
     public Flux<Player> showRanking() {
-        return playerRepository.findAllByOrderByWinsDesc();
-    }
-
-
-    public Mono<Player> createPlayer(Player player) {
-        return playerRepository.save(player); //Comprobar que no exista el nombre en base de datos
-    }
-
-    public Flux<Player> getPlayers(){
+        // Versión simple: sin ordenar
         return playerRepository.findAll();
+
+        // Si tienes ranking en la BD, sería algo tipo:
+        // return playerRepository.findAllByOrderBySuccessRateDesc();
     }
 
-    public Mono<Player> modifyPlayer(Long id , Player player) {
+    /**
+     * Actualiza el nombre del jugador por id.
+     * - Si no existe: lanza PlayerNotFoundException -> 404 vía GlobalExceptionHandler.
+     * - Si existe: actualiza el nombre y guarda.
+     */
+    public Mono<Player> modifyPlayer(Long id, Player player) {
         return playerRepository.findById(id)
-                .flatMap(playerModified -> {
-                    playerModified.setName(player.getName());
-                    return playerRepository.save(playerModified);
+                .switchIfEmpty(Mono.error(
+                        new PlayerNotFoundException("Player with id " + id + " not found")
+                ))
+                .flatMap(existing -> {
+                    existing.setName(player.getName());
+                    // si luego quieres actualizar más campos, los pones aquí
+                    return playerRepository.save(existing);
                 });
     }
 }

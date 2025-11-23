@@ -1,7 +1,7 @@
-package cat.itacademy.sprint_5_task_1_webflux.domain.mysql;
+package cat.itacademy.sprint_5_task_1_webflux.domain.record;
 
 
-import cat.itacademy.sprint_5_task_1_webflux.domain.GameResult;
+import cat.itacademy.sprint_5_task_1_webflux.domain.game.GameResult;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;

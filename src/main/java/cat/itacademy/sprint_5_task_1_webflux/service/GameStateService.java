@@ -1,24 +1,27 @@
 package cat.itacademy.sprint_5_task_1_webflux.service;
 
-import cat.itacademy.sprint_5_task_1_webflux.domain.GameEngine;
-import cat.itacademy.sprint_5_task_1_webflux.domain.GameResult;
-import cat.itacademy.sprint_5_task_1_webflux.domain.Move;
-import cat.itacademy.sprint_5_task_1_webflux.domain.mongodb.GameState;
-import cat.itacademy.sprint_5_task_1_webflux.domain.mysql.GameRecord;
-import cat.itacademy.sprint_5_task_1_webflux.domain.mysql.Player;
-import cat.itacademy.sprint_5_task_1_webflux.repository.GameRecordRepository;
-import cat.itacademy.sprint_5_task_1_webflux.repository.GameRepository;
-import cat.itacademy.sprint_5_task_1_webflux.repository.PlayerRepository;
+import cat.itacademy.sprint_5_task_1_webflux.domain.game.GameEngine;
+import cat.itacademy.sprint_5_task_1_webflux.domain.game.GameResult;
+import cat.itacademy.sprint_5_task_1_webflux.domain.game.Move;
+import cat.itacademy.sprint_5_task_1_webflux.domain.game.GameState;
+import cat.itacademy.sprint_5_task_1_webflux.domain.record.GameRecord;
+import cat.itacademy.sprint_5_task_1_webflux.domain.player.Player;
+import cat.itacademy.sprint_5_task_1_webflux.exception.GameAlreadyFinishedException;
+import cat.itacademy.sprint_5_task_1_webflux.exception.GameNotFoundException;
+import cat.itacademy.sprint_5_task_1_webflux.exception.InvalidMoveException;
+import cat.itacademy.sprint_5_task_1_webflux.repository.mysql.GameRecordRepository;
+import cat.itacademy.sprint_5_task_1_webflux.repository.mogodb.GameStateRepository;
+import cat.itacademy.sprint_5_task_1_webflux.repository.mysql.PlayerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
-public class GameService {
+public class GameStateService {
 
     // Mongo
-    private final GameRepository gameRepository;
+    private final GameStateRepository gameRepository;
 
     // Motor de juego
     private final GameEngine gameEngine;
@@ -35,20 +38,38 @@ public class GameService {
     }
 
     public Mono<GameState> getGameDetails(String id) {
-        return gameRepository.findById(id);
+        return gameRepository.findById(id)
+                .switchIfEmpty(Mono.error(new GameNotFoundException("Game with id " + id + " not found")));
     }
 
     public Mono<GameState> makeMove(String id, Move move) {
         return gameRepository.findById(id)
-                .switchIfEmpty(Mono.error(new RuntimeException("Game not found")))
-                // 1) aplicar jugada en el motor
-                .map(state ->
-                        (move == Move.HIT)
-                                ? gameEngine.applyHit(state)
-                                : gameEngine.applyStand(state)
-                )
-                // 2) guardar siempre el estado en Mongo + finalizar si toca
-                .flatMap(this::saveAndFinalizeIfNeeded);
+                .switchIfEmpty(Mono.error(new GameNotFoundException("Game with id " + id + " not found")))
+                .flatMap(state -> {
+                    // 1) validar si la partida está terminada
+                    if (state.getResult() != GameResult.IN_PROGRESS) {
+                        return Mono.error(new GameAlreadyFinishedException("Game with id " + id + " is already finished"));
+                    }
+
+                    // 2) validar si el movimiento es válido
+                    if (move == null) {
+                        return Mono.error(new InvalidMoveException("Move cannot be null"));
+                    }
+
+                    GameState updated;
+
+                    // 3) aplicar jugada según el tipo de movimiento
+                    switch (move) {
+                        case HIT -> updated = gameEngine.applyHit(state);
+                        case STAND -> updated = gameEngine.applyStand(state);
+                        default -> {
+                            return Mono.error(new InvalidMoveException("Unsupported move: " + move));
+                        }
+                    }
+
+                    // 4) guardar y finalizar si toca
+                    return saveAndFinalizeIfNeeded(updated);
+                });
     }
 
 

@@ -1,8 +1,7 @@
-package cat.itacademy.sprint_5_task_1_webflux.domain;
+package cat.itacademy.sprint_5_task_1_webflux.domain.game;
 
 
-import cat.itacademy.sprint_5_task_1_webflux.domain.mongodb.GameState;
-import cat.itacademy.sprint_5_task_1_webflux.domain.mysql.Player;
+import cat.itacademy.sprint_5_task_1_webflux.domain.player.Player;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

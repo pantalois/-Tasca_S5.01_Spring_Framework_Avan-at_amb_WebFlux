@@ -1,8 +1,5 @@
-package cat.itacademy.sprint_5_task_1_webflux.domain.mongodb;
+package cat.itacademy.sprint_5_task_1_webflux.domain.game;
 
-import cat.itacademy.sprint_5_task_1_webflux.domain.Card;
-import cat.itacademy.sprint_5_task_1_webflux.domain.GameResult;
-import cat.itacademy.sprint_5_task_1_webflux.domain.Turn;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
