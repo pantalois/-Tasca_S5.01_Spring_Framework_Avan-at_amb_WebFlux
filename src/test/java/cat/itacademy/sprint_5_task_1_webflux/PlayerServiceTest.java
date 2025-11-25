@@ -29,7 +29,7 @@ class PlayerServiceTest {
 
     @Test
     void getRanking_whenThereArePlayers_returnsFluxOfPlayers() {
-        // given
+
         Player p1 = new Player();
         p1.setId(1L);
         p1.setName("Alice");
