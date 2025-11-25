@@ -15,7 +15,7 @@ public enum Rank {
     JACK(10),
     QUEEN(10),
     KING(10),
-    ACE(1);   // el As empieza valiendo 1, ya decidirás luego si subirlo a 11
+    ACE(1);
 
     private final int value;
 

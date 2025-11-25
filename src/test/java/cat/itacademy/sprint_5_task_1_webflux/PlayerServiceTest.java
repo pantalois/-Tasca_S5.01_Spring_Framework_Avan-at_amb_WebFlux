@@ -40,10 +40,9 @@ class PlayerServiceTest {
 
         when(playerRepository.findAll()).thenReturn(Flux.fromIterable(List.of(p1, p2)));
 
-        // when
         Flux<Player> result = playerService.showRanking();
 
-        // then
+
         StepVerifier.create(result)
                 .expectNext(p1)
                 .expectNext(p2)
@@ -54,7 +53,6 @@ class PlayerServiceTest {
 
     @Test
     void modifyPlayer_whenPlayerExists_updatesNameAndReturnsUpdatedPlayer() {
-        // given
         Long id = 1L;
 
         Player existing = new Player();
@@ -71,10 +69,10 @@ class PlayerServiceTest {
         when(playerRepository.findById(id)).thenReturn(Mono.just(existing));
         when(playerRepository.save(any(Player.class))).thenReturn(Mono.just(saved));
 
-        // when
+
         Mono<Player> result = playerService.modifyPlayer(id, updateData);
 
-        // then
+
         StepVerifier.create(result)
                 .expectNextMatches(player ->
                         player.getId() == id &&
@@ -88,17 +86,17 @@ class PlayerServiceTest {
 
     @Test
     void modifyPlayer_whenPlayerDoesNotExist_throwsPlayerNotFoundException() {
-        // given
+
         Long id = 99L;
         Player updateData = new Player();
         updateData.setName("Whatever");
 
         when(playerRepository.findById(id)).thenReturn(Mono.empty());
 
-        // when
+
         Mono<Player> result = playerService.modifyPlayer(id, updateData);
 
-        // then
+
         StepVerifier.create(result)
                 .expectErrorMatches(throwable ->
                         throwable instanceof PlayerNotFoundException &&
