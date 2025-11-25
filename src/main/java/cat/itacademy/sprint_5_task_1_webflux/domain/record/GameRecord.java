@@ -15,13 +15,13 @@ import java.time.LocalDateTime;
 public class GameRecord {
 
     @Id
-    private Long id;                      // lo genera MySQL
+    private Long id;
 
     @NonNull
     private String playerName;
 
     @NonNull
-    private GameResult result;            // PLAYER_WINS / DEALER_WINS / PUSH
+    private GameResult result;
 
     @NonNull
     private Integer playerScore;
@@ -29,5 +29,5 @@ public class GameRecord {
     @NonNull
     private Integer dealerScore;
 
-    private LocalDateTime createdAt;      // lo pone MySQL con DEFAULT CURRENT_TIMESTAMP
+    private LocalDateTime createdAt;
 }

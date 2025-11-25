@@ -1,0 +1,48 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-blackjack
+    environment:
+      MYSQL_ROOT_PASSWORD: root1234
+      MYSQL_DATABASE: blackjack
+      MYSQL_USER: blackjack
+      MYSQL_PASSWORD: blackjack
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  mongo:
+    image: mongo:7
+    container_name: mongo-blackj
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  app:
+    build: .
+    container_name: blackjack-app
+    depends_on:
+      - mysql
+      - mongo
+    ports:
+      - "8080:8080"
+    environment:
+      SERVER_PORT: 8080
+
+
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DATABASE: blackjack
+      MYSQL_USER: blackjack
+      MYSQL_PASSWORD: blackjack
+
+
+      MONGO_HOST: mongo
+      MONGO_PORT: 27017
+      MONGO_DATABASE: blackjack
+
+volumes:
+  mysql_data:
+  mongo_data:

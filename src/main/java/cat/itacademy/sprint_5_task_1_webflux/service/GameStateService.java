@@ -20,13 +20,10 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class GameStateService {
 
-    // Mongo
     private final GameStateRepository gameRepository;
 
-    // Motor de juego
     private final GameEngine gameEngine;
 
-    // MySQL
     private final PlayerRepository playerRepository;
     private final GameRecordRepository gameRecordRepository;
 
@@ -46,19 +43,16 @@ public class GameStateService {
         return gameRepository.findById(id)
                 .switchIfEmpty(Mono.error(new GameNotFoundException("Game with id " + id + " not found")))
                 .flatMap(state -> {
-                    // 1) validar si la partida está terminada
                     if (state.getResult() != GameResult.IN_PROGRESS) {
                         return Mono.error(new GameAlreadyFinishedException("Game with id " + id + " is already finished"));
                     }
 
-                    // 2) validar si el movimiento es válido
                     if (move == null) {
                         return Mono.error(new InvalidMoveException("Move cannot be null"));
                     }
 
                     GameState updated;
 
-                    // 3) aplicar jugada según el tipo de movimiento
                     switch (move) {
                         case HIT -> updated = gameEngine.applyHit(state);
                         case STAND -> updated = gameEngine.applyStand(state);
@@ -67,7 +61,6 @@ public class GameStateService {
                         }
                     }
 
-                    // 4) guardar y finalizar si toca
                     return saveAndFinalizeIfNeeded(updated);
                 });
     }
@@ -84,26 +77,21 @@ public class GameStateService {
         Mono<GameState> saved = gameRepository.save(state);
 
         if (state.getResult() == GameResult.IN_PROGRESS) {
-            // La partida sigue → solo guardamos en Mongo
             return saved;
         }
 
-        // La partida ha terminado → ranking + GameRecord en MySQL
         Mono<Void> finalize = finalizeGame(state);
         return Mono.when(saved, finalize).thenReturn(state);
     }
 
-    // TODA la lógica de “cuando hay ganador, persisto cosas”
     private Mono<Void> finalizeGame(GameState state) {
         String playerName = state.getPlayerName();
 
-        // 1) asegurar que el Player existe
         Mono<Player> base = playerRepository.findByName(playerName)
                 .switchIfEmpty(
                         playerRepository.save(new Player(playerName, 0))
                 );
 
-        // 2) si gana el jugador, sumarle una win
         Mono<Player> updated =
                 (state.getResult() == GameResult.PLAYER_WINS)
                         ? base.flatMap(player -> {
@@ -112,7 +100,6 @@ public class GameStateService {
                 })
                         : base;
 
-        // 3) guardar un GameRecord con el playerId de MySQL
         Mono<GameRecord> recordMono = updated.flatMap(player -> {
             GameRecord record = new GameRecord(
                     state.getPlayerName(),

@@ -55,12 +55,12 @@ public class GlobalExceptionHandler {
             GameAlreadyFinishedException ex,
             ServerWebExchange exchange) {
 
-        HttpStatus status = HttpStatus.CONFLICT; // 409
+        HttpStatus status = HttpStatus.CONFLICT;
 
         ErrorResponse body = new ErrorResponse(
-                ex.getMessage(),                  // "Game with id X is already finished"
-                status.name(),                    // "CONFLICT"
-                status.value(),                   // 409
+                ex.getMessage(),
+                status.name(),
+                status.value(),
                 exchange.getRequest().getPath().value()
         );
 
@@ -72,12 +72,12 @@ public class GlobalExceptionHandler {
             InvalidMoveException ex,
             ServerWebExchange exchange) {
 
-        HttpStatus status = HttpStatus.BAD_REQUEST; // 400
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
         ErrorResponse body = new ErrorResponse(
-                ex.getMessage(),                  // "Move cannot be null" o lo que pongas
-                status.name(),                    // "BAD_REQUEST"
-                status.value(),                   // 400
+                ex.getMessage(),
+                status.name(),
+                status.value(),
                 exchange.getRequest().getPath().value()
         );
 
@@ -109,7 +109,7 @@ public class GlobalExceptionHandler {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         ErrorResponse body = new ErrorResponse(
-                "Internal server error",   // aquí no filtros el mensaje real
+                "Internal server error",
                 status.name(),
                 status.value(),
                 exchange.getRequest().getPath().value()

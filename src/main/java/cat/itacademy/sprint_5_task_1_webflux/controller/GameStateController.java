@@ -5,6 +5,7 @@ import cat.itacademy.sprint_5_task_1_webflux.dto.request.PlayMoveRequest;
 import cat.itacademy.sprint_5_task_1_webflux.dto.response.GameStateResponse;
 import cat.itacademy.sprint_5_task_1_webflux.mapper.GameStateMapper;
 import cat.itacademy.sprint_5_task_1_webflux.service.GameStateService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -36,7 +37,10 @@ public class GameStateController {
         var player = mapper.toPlayer(request);
         return gameService.createGame(player)
                 .map(mapper::toResponse)
-                .map(ResponseEntity::ok);
+                .map(response -> ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .body(response)
+                );
     }
 
 
@@ -73,6 +77,6 @@ public class GameStateController {
     )
     public Mono<ResponseEntity<Void>> deleteGame(@PathVariable String id) {
         return gameService.deleteGame(id)
-                .thenReturn(ResponseEntity.noContent().<Void>build());
+                .thenReturn(ResponseEntity.noContent().build());
     }
 }

@@ -36,7 +36,7 @@ public class PlayerController {
                 .map(playerMapper::toResponse);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("player/{id}")
     @Operation(
             summary = "Actualizar jugador por ID",
             description = "Actualiza el nombre de un jugador existente identificado por su ID"

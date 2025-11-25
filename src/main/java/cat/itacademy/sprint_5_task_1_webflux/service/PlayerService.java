@@ -16,25 +16,12 @@ public class PlayerService {
         this.playerRepository = playerRepository;
     }
 
-    /**
-     * Devuelve el ranking de jugadores.
-     * Ahora mismo delega en findAll().
-     * Si tienes un método específico en el repositorio (p.ej. findAllByOrderBySuccessRateDesc),
-     * lo cambias aquí y no tocas el controller.
-     */
-    public Flux<Player> showRanking() {
-        // Versión simple: sin ordenar
-        return playerRepository.findAll();
 
-        // Si tienes ranking en la BD, sería algo tipo:
-        // return playerRepository.findAllByOrderBySuccessRateDesc();
+    public Flux<Player> showRanking() {
+        return playerRepository.findAllByOrderByWinsDesc();
     }
 
-    /**
-     * Actualiza el nombre del jugador por id.
-     * - Si no existe: lanza PlayerNotFoundException -> 404 vía GlobalExceptionHandler.
-     * - Si existe: actualiza el nombre y guarda.
-     */
+
     public Mono<Player> modifyPlayer(Long id, Player player) {
         return playerRepository.findById(id)
                 .switchIfEmpty(Mono.error(
@@ -42,7 +29,6 @@ public class PlayerService {
                 ))
                 .flatMap(existing -> {
                     existing.setName(player.getName());
-                    // si luego quieres actualizar más campos, los pones aquí
                     return playerRepository.save(existing);
                 });
     }

@@ -30,7 +30,7 @@ public class GameState {
     private Integer dealerScore;
 
     @NonNull
-    private List<Card> deck; // mazo que se va reduciendo
+    private List<Card> deck;
 
 
     @NonNull

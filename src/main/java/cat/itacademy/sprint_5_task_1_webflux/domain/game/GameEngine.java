@@ -16,23 +16,23 @@ public class GameEngine {
     }
 
     public GameState initGame(Player player) {
-        // 1) Creamos el mazo barajado
+
         List<Card> deck = deckFactory.createShuffledDeck();
 
-        // 2) Creamos la instancia base de GameState
+
         GameState state = new GameState(
                 player.getName(),
-                0,      // playerScore inicial
-                0,      // dealerScore inicial
-                deck,  // mazo completo, aún sin robar
+                0,
+                0,
+                deck,
                 Turn.PLAYER,
                 GameResult.IN_PROGRESS
         );
 
-        // 3) Repartimos cartas modificando ESA MISMA instancia
+
         dealInitialCards(state);
 
-        // 4) Devolvemos el mismo objeto, ya preparado
+
         return state;
     }
 
@@ -42,17 +42,17 @@ public class GameEngine {
         List<Card> playerCards = new java.util.ArrayList<>();
         List<Card> dealerCards = new java.util.ArrayList<>();
 
-        // formato que tú uses para las cartas, por ejemplo "AS_CORAZONES"
+
         playerCards.add(draw(deck));
-        dealerCards.add(draw(deck)); // crupier boca arriba
+        dealerCards.add(draw(deck));
         playerCards.add(draw(deck));
-        dealerCards.add(draw(deck)); // crupier boca abajo
+        dealerCards.add(draw(deck));
 
         state.setPlayerCards(playerCards);
         state.setDealerCards(dealerCards);
 
        state.setPlayerScore(calculateScore(playerCards));
-       state.setDealerScore(calculateScore(dealerCards)); // o solo la visible, como tú decidas
+       state.setDealerScore(calculateScore(dealerCards));
     }
 
     private Card draw(List<Card> deck) {
@@ -96,28 +96,27 @@ public class GameEngine {
 
 
     public GameState applyHit(GameState state) {
-        // Si la partida ya ha terminado, no hacemos nada
+
         if (state.getResult() != GameResult.IN_PROGRESS) {
             return state;
         }
 
-        // Si es turno del jugador
-        if (state.getCurrentTurn() == Turn.PLAYER) {
-            drawCardForPlayer(state); // roba, recalcula playerScore
 
-            // Se pasa → gana la casa
+        if (state.getCurrentTurn() == Turn.PLAYER) {
+            drawCardForPlayer(state);
+
+
             if (state.getPlayerScore() > 21) {
                 state.setResult(GameResult.DEALER_WINS);
                 return state;
             }
 
-            // Clava 21 → auto-stand: cede turno al crupier
+
             return (state.getPlayerScore() == 21)
-                    ? applyStand(state)   // aquí el crupier juega su parte y decideWinner
-                    : state;              // si no, sigue jugando normalmente
+                    ? applyStand(state)
+                    : state;
         }
 
-        // Si algún día permites HIT del crupier manualmente:
         drawCardForDealer(state);
         if (state.getDealerScore() > 21) {
             state.setResult(GameResult.PLAYER_WINS);
@@ -141,25 +140,20 @@ public class GameEngine {
     }
 
     public GameState applyStand(GameState state) {
-        // si ya no está en juego, no hacemos nada
         if (state.getResult() != GameResult.IN_PROGRESS) {
             return state;
         }
 
-        // solo tiene sentido si es turno del jugador
         if (state.getCurrentTurn() != Turn.PLAYER) {
             return state;
         }
 
-        // 1) el jugador pasa turno al crupier
         state.setCurrentTurn(Turn.DEALER);
 
-        // 2) el crupier roba hasta tener 17 o más
         while (state.getDealerScore() < 17 || state.getDealerScore() < state.getPlayerScore()) {
             drawCardForDealer(state);
         }
 
-        // 3) decidir ganador con las puntuaciones finales
         decideWinner(state);
 
         return state;
