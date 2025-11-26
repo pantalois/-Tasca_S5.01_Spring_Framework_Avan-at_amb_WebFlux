@@ -60,13 +60,13 @@ The game logic runs on a reactive stack, and all data is stored in MySQL and Mon
    - When all containers are running without errors, the API should be available at:  
      `http://localhost:8080`
 
-### 4.1 Game Endpoints (`GameStateController`)
+4.1 Game Endpoints (`GameStateController`)
 
 All game-related endpoints are under the base path:
 
 `/game`
 
-#### 4.1.1 Create a new game
+4.1.1 Create a new game
 
 - **Method:** `POST`
 - **Path:** `/game/new`
@@ -86,7 +86,7 @@ Content-Type: application/json
   "playerName": "Alice"
 }
 
-#### 4.1.2 Get game by ID
+4.1.2 Get game by ID
 
 -   **Method:** `GET`
     
@@ -109,7 +109,7 @@ Example:
 
 `GET /game/675f0b432c1a4b0c9a1f4d12`
 
-#### 4.1.3 Play a move (HIT / STAND)
+4.1.3 Play a move (HIT / STAND)
 
 -   **Method:** `PUT`
     
@@ -139,7 +139,7 @@ Content-Type: application/json
   "move": "HIT" 
 }
 
-#### 4.1.4 Delete a game
+4.1.4 Delete a game
 
 -   **Method:** `DELETE`
     
@@ -164,11 +164,11 @@ Example:
 
 * * *
 
-### 4.2 Player Endpoints (`PlayerController`)
+4.2 Player Endpoints (`PlayerController`)
 
 Player-related endpoints are exposed at the root (no class-level `@RequestMapping`), so the paths below are absolute.
 
-#### 4.2.1 Get players ranking
+4.2.1 Get players ranking
 
 -   **Method:** `GET`
     
@@ -192,7 +192,7 @@ Example response (conceptual):
 
 `[   {     "id": 1,     "name": "Alice",     "wins": 10   },   {     "id": 2,     "name": "Bob",     "wins": 7   } ]`
 
-#### 4.2.2 Update player by ID
+4.2.2 Update player by ID
 
 -   **Method:** `PUT`
     
